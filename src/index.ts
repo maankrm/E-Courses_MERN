@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import userRoute from "./routes/userRoute";
 import { seedInitialProducts } from "./services/productService";
 import productRoute from "./routes/productRoute";
+import cardRoute from "./routes/cardRoute";
 
 // Entry point >> start app from here
 // main app
@@ -24,6 +25,7 @@ seedInitialProducts();
 // use for handle routers and middleware
 app.use("/user", userRoute);
 app.use("/products", productRoute);
+app.use("/card", cardRoute);
 
 app.listen(port, () => {
   console.log(`server is running at : http://localhost:${port}`);

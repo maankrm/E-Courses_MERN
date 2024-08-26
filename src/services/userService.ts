@@ -36,7 +36,7 @@ export const register = async ({
   });
   // save new user in db
   await newUser.save();
-  return { data: generateJWT({firstName,lastName,email}), statusCode: 200 };
+  return { data: generateJWT({ firstName, lastName, email }), statusCode: 200 };
 };
 
 // login function------------------------------------------------------------------------------------------------------------
@@ -57,7 +57,15 @@ export const login = async ({ email, password }: LoginParams) => {
   const passwordMatch = await bcrypt.compare(password, findUser.password);
 
   if (passwordMatch) {
-    return { data: generateJWT({firstName: findUser.firstName, lastName: findUser.lastName, email}), statusCode: 200 };
+    return {
+      // here are data or payload
+      data: generateJWT({
+        firstName: findUser.firstName,
+        lastName: findUser.lastName,
+        email,
+      }),
+      statusCode: 200,
+    };
   }
 
   return { data: "Incorrect email or Password!", statusCode: 400 };
@@ -65,11 +73,11 @@ export const login = async ({ email, password }: LoginParams) => {
 
 // generate JWT -----------------------------------------------------------------------------------------------------------
 const generateJWT = (data: any) => {
-  return jwt.sign(data, "#SoXCs&QVu0KbR8BPmifUVaq46V5BX0I6EFWokiB&j6qRfF4nSJjaijQ5?3pOFgSp");
+  return jwt.sign(
+    data,
+    "#SoXCs&QVu0KbR8BPmifUVaq46V5BX0I6EFWokiB&j6qRfF4nSJjaijQ5?3pOFgSp"
+  );
 };
-
-
-
 
 // generate random key -----------------------------------------------------------------------------------------------------------
 
