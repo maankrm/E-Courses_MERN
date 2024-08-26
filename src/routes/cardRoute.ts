@@ -1,9 +1,7 @@
 import express, { Request, Response } from "express";
-import { getActiveCardForUse } from "../services/cardService";
+import { addItemToCard, getActiveCardForUse } from "../services/cardService";
 import validateJWT from "../middlewares/validateJWT";
 import { ExtendedReq } from "../types/extendedRequest";
-
-
 
 const router = express.Router();
 
@@ -30,8 +28,12 @@ router.get("/", validateJWT, async (req: ExtendedReq, res: Response) => {
   }
 });
 
-
-// create a card
-
+// create a new card
+router.post("/items", validateJWT, async (req: ExtendedReq, res: Response) => {
+  const userId = req.user?._id;
+  const { productId, quantity } = req.body;
+  const response = await addItemToCard({ userId, productId, quantity });
+  res.status(response.statusCode).send(response.data);
+});
 
 export default router;

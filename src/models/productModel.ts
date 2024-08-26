@@ -30,7 +30,8 @@ const productSchema = new Schema<IProduct>({
     type: Number,
     required: true,
     default: 0,
-  },
+  }
+  
 });
 
 const productModel = mongoose.model<IProduct>("Product", productSchema);

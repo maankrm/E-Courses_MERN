@@ -3,9 +3,9 @@ import { IProduct } from "./productModel";
 
 const cardStatus = ["Active", "Completed"];
 
-export interface ICardItem extends Document {
+export interface ICardItem {
   product: IProduct;
-  quantity: number;
+  quantity?: string;
   unitPrice: number;
 }
 
@@ -24,9 +24,9 @@ const cardItemSchema = new Schema<ICardItem>({
     required: true,
   },
   quantity: {
-    type: Number,
+    type: String,
     required: true,
-    default: 1,
+    default: 10,
   },
   unitPrice: {
     type: Number,
