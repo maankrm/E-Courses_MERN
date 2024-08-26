@@ -1,22 +1,17 @@
 import express, { Request, Response } from "express";
 import { getActiveCardForUse } from "../services/cardService";
 import validateJWT from "../middlewares/validateJWT";
+import { ExtendedReq } from "../types/extendedRequest";
 
-// Extend the Express Request interface
-interface RequestUser extends Request {
-  user?: {
-    _id: string;
-    // add other user properties
-  };
-}
+
 
 const router = express.Router();
 
 // Route to get the active card for the authenticated user
-router.get("/", validateJWT, async (req: RequestUser, res: Response) => {
+router.get("/", validateJWT, async (req: ExtendedReq, res: Response) => {
   try {
     // Extract the user ID from the authenticated request object
-    const userId: "string" = req.user?._id as "string";
+    const userId = req.user?._id;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID not found in request" });
@@ -34,5 +29,9 @@ router.get("/", validateJWT, async (req: RequestUser, res: Response) => {
       .json({ message: "An error occurred while fetching the card", error });
   }
 });
+
+
+// create a card
+
 
 export default router;
