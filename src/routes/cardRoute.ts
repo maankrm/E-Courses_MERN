@@ -1,11 +1,11 @@
 import express, { Request, Response } from "express";
-import { addItemToCard, getActiveCardForUse } from "../services/cardService";
+import { addItemToCard, getActiveCardForUse, updateItemInCard } from "../services/cardService";
 import validateJWT from "../middlewares/validateJWT";
 import { ExtendedReq } from "../types/extendedRequest";
 
 const router = express.Router();
 
-// Route to get the active card for the authenticated user
+// Route to get the active card for the authenticated user---------------------------------------------------------------------------
 router.get("/", validateJWT, async (req: ExtendedReq, res: Response) => {
   try {
     // Extract the user ID from the authenticated request object
@@ -28,11 +28,20 @@ router.get("/", validateJWT, async (req: ExtendedReq, res: Response) => {
   }
 });
 
-// create a new card
+// create a new card-------------------------------------------------------------------------------------------------------------------
 router.post("/items", validateJWT, async (req: ExtendedReq, res: Response) => {
   const userId = req.user?._id;
   const { productId, quantity } = req.body;
   const response = await addItemToCard({ userId, productId, quantity });
+  res.status(response.statusCode).send(response.data);
+});
+
+// update card--------------------------------------------------------------------------------------------------------------------------
+
+router.put("/items", validateJWT, async (req: ExtendedReq, res: Response) => {
+  const userId = req.user?._id;
+  const { productId, quantity } = req.body;
+  const response = await updateItemInCard({ userId, productId, quantity });
   res.status(response.statusCode).send(response.data);
 });
 

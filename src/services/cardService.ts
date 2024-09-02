@@ -5,20 +5,25 @@ interface createCardForUser {
   userId: string;
 }
 
-// create card for user
+// create card for user------------------------------------------------------------------------------------------------------------
+// user has not any card >> the first time function
 const createCardForUser = async ({ userId }: createCardForUser) => {
   const card = await cardModel.create({ userId, totalAmount: 0 });
+  // save the card in db
   await card.save();
   return card;
 };
 
 interface GetActiveCardForUser {
-  userId: "string";
+  userId: string;
 }
 
+// user is already has a card just get it 
 export const getActiveCardForUse = async ({ userId }: GetActiveCardForUser) => {
+  // if there is a card for user
   let card = await cardModel.findOne({ userId, status: "Active" });
 
+  // if no card create one
   if (!card) {
     card = await createCardForUser({ userId });
   }
@@ -26,6 +31,8 @@ export const getActiveCardForUse = async ({ userId }: GetActiveCardForUser) => {
   return card;
 };
 
+
+// add items-----------------------------------------------------------------------------------------------------------------------
 interface AddItemToCard {
   productId: any;
   quantity: string;
@@ -69,4 +76,47 @@ export const addItemToCard = async ({
   const updatedCard = await card.save();
 
   return { data: updatedCard, statusCode: 201 };
+};
+
+
+// update -----------------------------------------------------------------------------------------------------------------
+interface UpdateItemInCard {
+  userId: string;
+  productId: any;
+  quantity: number;
+}
+export const updateItemInCard = async ({
+  userId,
+  productId,
+  quantity,
+}: UpdateItemInCard) => {
+  const card = await getActiveCardForUse({ userId });
+  const existedCard: any = card.items.find((p) => {
+    p.product.toString() === productId;
+  });
+
+  if (!existedCard) {
+    return { data: "No Item in card yet ", statusCode: 400 };
+  }
+
+  const product = await productModel.findById(productId);
+
+  // calculate card quantity (total amount)
+
+  const otherItem = card.items.filter(
+    (p) => p.product.toString() !== productId
+  );
+
+  let totalAmout = otherItem.reduce((total, product: any) => {
+    total += product.quantity * product.unitPrice;
+    return total;
+  }, 0);
+
+  existedCard.quantity = quantity;
+
+  totalAmout += existedCard.quantity * existedCard.unitPrice;
+
+  const updatedCard = await card.save();
+
+  return { data: updatedCard, statusCode: 200 };
 };
